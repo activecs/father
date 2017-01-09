@@ -3,6 +3,7 @@ package com.epam.env.father.bot.commands;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.objects.Chat;
 import org.telegram.telegrambots.api.objects.User;
@@ -19,6 +20,8 @@ public abstract class TexteReplyBotCommand extends BotCommand {
 
     @Autowired
     private ClientService clientService;
+    @Autowired
+    protected MessageSource messageSource;
 
     public TexteReplyBotCommand(String commandIdentifier, String description) {
         super(commandIdentifier, description);

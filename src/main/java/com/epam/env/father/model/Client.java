@@ -1,5 +1,7 @@
 package com.epam.env.father.model;
 
+import java.util.Locale;
+
 import org.springframework.data.annotation.Id;
 
 import lombok.Builder;
@@ -8,9 +10,9 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+@Builder
 @EqualsAndHashCode(of = "id")
 @ToString(exclude="chatId")
-@Builder
 public class Client {
 
     @Id
@@ -27,6 +29,9 @@ public class Client {
     @Getter
     @Setter
     private String username;
+    @Getter
+    @Setter
+    private Locale locale = Locale.ENGLISH;
 
 }
 

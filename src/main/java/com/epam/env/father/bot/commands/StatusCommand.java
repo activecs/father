@@ -10,20 +10,18 @@ import com.epam.env.father.model.Client;
 import com.epam.env.father.service.EnvironmentService;
 
 @CommandComponent
-public class StopCommand extends TexteReplyBotCommand {
+public class StatusCommand extends TexteReplyBotCommand {
 
     @Autowired
     private EnvironmentService environmentService;
 
-    public StopCommand() {
-        super("stop", "With this command you can stop the Bot");
+    public StatusCommand() {
+        super("status", "With this command you can get up to date info regarding envs statuses");
     }
 
     @Override
     protected void prepareResponse(SendMessage answer, AbsSender absSender, Client user) throws TelegramApiException {
-        String message = messageSource.getMessage("good.bye", new Object[]{user.getFirstName(), user.getLastName()}, user.getLocale());
-        answer.setText(message);
-        environmentService.releaseReservations(user);
+        answer.setText(environmentService.getAllAvailable().toString());
         absSender.sendMessage(answer);
     }
 }

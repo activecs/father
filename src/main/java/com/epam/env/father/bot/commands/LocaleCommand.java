@@ -1,5 +1,6 @@
 package com.epam.env.father.bot.commands;
 
+import org.telegram.telegrambots.api.methods.AnswerCallbackQuery;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.bots.AbsSender;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
@@ -8,17 +9,16 @@ import com.epam.env.father.bot.meta.CommandComponent;
 import com.epam.env.father.model.Client;
 
 @CommandComponent
-public class HelloCommand extends TexteReplyBotCommand {
+public class LocaleCommand extends TexteReplyBotCommand {
 
-    public HelloCommand() {
-        super("hello", "Say hallo to this bot");
+    public LocaleCommand() {
+        super("locale", "With this command you can change your locale");
     }
 
     @Override
     protected void prepareResponse(SendMessage answer, AbsSender absSender, Client user) throws TelegramApiException {
-        String userName = user.getFirstName() + " " + user.getLastName();
-        StringBuilder messageTextBuilder = new StringBuilder("Hello ").append(userName);
-        answer.setText(messageTextBuilder.toString());
-        absSender.sendMessage(answer);
+        AnswerCallbackQuery inlineQuery = new AnswerCallbackQuery();
+        inlineQuery.setText("Please select locale");
+        absSender.answerCallbackQuery(inlineQuery);
     }
 }

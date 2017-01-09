@@ -21,20 +21,16 @@ public class StartCommand extends TexteReplyBotCommand {
 
     @Override
     protected void prepareResponse(SendMessage answer, AbsSender absSender, Client user) throws TelegramApiException {
-        StringBuilder messageBuilder = new StringBuilder();
-        String userName = user.getFirstName() + " " + user.getLastName();
-        messageBuilder.append("Welcome ").append(userName).append("\n");
-        messageBuilder.append("this bot will demonstrate you the command feature of the Java TelegramBots API!");
+        String message = messageSource.getMessage("welcome", new Object[]{user.getFirstName(), user.getLastName()}, user.getLocale());
         ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
         List<KeyboardRow> commands = new ArrayList<>();
         KeyboardRow commandRow = new KeyboardRow();
-        commandRow.add("/help");
-        commandRow.add("/start");
+        commandRow.add("/status");
         commands.add(commandRow);
         replyKeyboardMarkup.setResizeKeyboard(true);
         replyKeyboardMarkup.setKeyboard(commands);
         replyKeyboardMarkup.setSelective(true);
-        answer.setText(messageBuilder.toString());
+        answer.setText(message);
         answer.setReplyMarkup(replyKeyboardMarkup);
         absSender.sendMessage(answer);
     }
