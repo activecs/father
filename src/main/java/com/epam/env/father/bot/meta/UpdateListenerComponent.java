@@ -2,7 +2,7 @@ package com.epam.env.father.bot.meta;
 
 import org.springframework.stereotype.Component;
 
-@Command(BotName.ENV_FATHER)
+@UpdateListener(BotName.ENV_FATHER)
 @Component
-public @interface CommandComponent {
+public @interface UpdateListenerComponent {
 }

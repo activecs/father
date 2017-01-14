@@ -42,7 +42,7 @@ dependencies {
 		exclude group: 'org.springframework.boot', module: 'spring-boot-starter-tomcat'
 	}
 	compile ('org.springframework.boot:spring-boot-starter-jetty')
-
+	compile ('com.javaslang:javaslang:2.0.0-RC4')
 	compile('org.telegram:telegrambots:2.4.4')
 	compileOnly('org.projectlombok:lombok')
 	testCompile('org.springframework.boot:spring-boot-starter-test')

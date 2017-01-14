@@ -1,7 +1,13 @@
 package com.epam.env.father.bot.commands;
 
-import org.telegram.telegrambots.api.methods.AnswerCallbackQuery;
+import static com.google.common.collect.Lists.newArrayList;
+import static java.util.Arrays.asList;
+
+import java.util.List;
+
 import org.telegram.telegrambots.api.methods.send.SendMessage;
+import org.telegram.telegrambots.api.objects.replykeyboard.InlineKeyboardMarkup;
+import org.telegram.telegrambots.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.bots.AbsSender;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
 
@@ -17,8 +23,14 @@ public class LocaleCommand extends TexteReplyBotCommand {
 
     @Override
     protected void prepareResponse(SendMessage answer, AbsSender absSender, Client user) throws TelegramApiException {
-        AnswerCallbackQuery inlineQuery = new AnswerCallbackQuery();
-        inlineQuery.setText("Please select locale");
-        absSender.answerCallbackQuery(inlineQuery);
+        InlineKeyboardMarkup keyboardMarkup = new InlineKeyboardMarkup();
+        InlineKeyboardButton enLocaleButton = new InlineKeyboardButton();
+        enLocaleButton.setText("select.locale.en");
+        enLocaleButton.setCallbackData("locale=en");
+        List<InlineKeyboardButton> firstLine = newArrayList(enLocaleButton);
+        keyboardMarkup.setKeyboard(asList(firstLine));
+        answer.setReplyMarkup(keyboardMarkup);
+        answer.setText("please.select.locale");
+        absSender.sendMessage(answer);
     }
 }

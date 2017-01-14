@@ -20,4 +20,9 @@ public class Environment {
     private Client reservedBy;
     private LocalDateTime reservationExpiration;
 
+    @Override
+    public String toString() {
+        return "Environment id='" + id + "\', reserved by=" + reservedBy +
+                ", reservation expiration date=" + reservationExpiration;
+    }
 }
