@@ -15,13 +15,17 @@ public class ClientService {
     @Autowired
     private ClientRepository clientRepository;
 
-    public Client registerClient(User user) {
+    public Client register(User user) {
         Client client = Client.builder()
                 .id(user.getId())
                 .firstName(user.getFirstName())
                 .lastName(user.getLastName())
                 .build();
         return clientRepository.insert(client);
+    }
+
+    public Client update(Client client) {
+        return clientRepository.save(client);
     }
 
     public Optional<Client> findById(Integer id) {

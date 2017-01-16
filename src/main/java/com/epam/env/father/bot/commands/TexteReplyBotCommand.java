@@ -37,7 +37,7 @@ public abstract class TexteReplyBotCommand extends BotCommand {
 
     private Client findClient(User user) {
         Optional<Client> client = clientService.findById(user.getId());
-        return client.orElseGet(() -> clientService.registerClient(user));
+        return client.orElseGet(() -> clientService.register(user));
     }
 
     protected abstract void prepareResponse(SendMessage answer, AbsSender absSender, Client user) throws TelegramApiException;

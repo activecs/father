@@ -16,10 +16,11 @@ import lombok.ToString;
 public class Client {
 
     @Id
+    @Getter
     public Integer id;
     @Getter
     @Setter
-    private String chatId;
+    private Long chatId;
     @Getter
     @Setter
     private String firstName;
