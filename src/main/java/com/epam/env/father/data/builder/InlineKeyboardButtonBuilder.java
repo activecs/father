@@ -1,8 +1,10 @@
 package com.epam.env.father.data.builder;
 
+import static com.google.common.collect.Lists.newArrayList;
 import static java.util.Locale.ENGLISH;
 import static org.springframework.beans.factory.config.ConfigurableBeanFactory.SCOPE_PROTOTYPE;
 
+import java.util.List;
 import java.util.Locale;
 
 import org.springframework.beans.factory.BeanFactory;
@@ -27,10 +29,10 @@ public class InlineKeyboardButtonBuilder {
     @Autowired
     protected MessageSource messageSource;
 
-    private String message;
     private Object data;
     private Locale locale = ENGLISH;
-    private Object[] messageArgs = new Object[0];
+    private String message;
+    private List<Object> messageArgs = newArrayList();
 
     private InlineKeyboardButtonBuilder() {
     }
@@ -39,13 +41,7 @@ public class InlineKeyboardButtonBuilder {
         return beanFactory.getBean(this.getClass());
     }
 
-    public InlineKeyboardButtonBuilder begin(Locale locale) {
-        InlineKeyboardButtonBuilder builder = begin();
-        builder.withLocale(locale);
-        return builder;
-    }
-
-    private InlineKeyboardButtonBuilder withLocale(Locale locale) {
+    public InlineKeyboardButtonBuilder withLocale(Locale locale) {
         this.locale = locale;
         return this;
     }
@@ -55,8 +51,8 @@ public class InlineKeyboardButtonBuilder {
         return this;
     }
 
-    public InlineKeyboardButtonBuilder withMessageArgs(Object[] messageArgs) {
-        this.messageArgs = messageArgs;
+    public InlineKeyboardButtonBuilder withMessageArgs(List<Object> messageArgs) {
+        this.messageArgs.addAll(messageArgs);
         return this;
     }
 
@@ -68,7 +64,7 @@ public class InlineKeyboardButtonBuilder {
     @SneakyThrows
     public InlineKeyboardButton build() {
         InlineKeyboardButton button = new InlineKeyboardButton();
-        button.setText(messageSource.getMessage(message, messageArgs, locale));
+        button.setText(messageSource.getMessage(message, messageArgs.toArray(), locale));
         button.setCallbackData(jacksonObjectMapper.writeValueAsString(data));
         return button;
     }

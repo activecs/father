@@ -4,13 +4,13 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
-import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.objects.Chat;
 import org.telegram.telegrambots.api.objects.User;
 import org.telegram.telegrambots.bots.AbsSender;
 import org.telegram.telegrambots.bots.commands.BotCommand;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
 
+import com.epam.env.father.data.builder.SendMessageBuilder;
 import com.epam.env.father.model.Client;
 import com.epam.env.father.service.ClientService;
 
@@ -22,6 +22,8 @@ public abstract class TexteReplyBotCommand extends BotCommand {
     private ClientService clientService;
     @Autowired
     protected MessageSource messageSource;
+    @Autowired
+    protected SendMessageBuilder sendMessageBuilder;
 
     public TexteReplyBotCommand(String commandIdentifier, String description) {
         super(commandIdentifier, description);
@@ -30,9 +32,11 @@ public abstract class TexteReplyBotCommand extends BotCommand {
     @SneakyThrows
     @Override
     public void execute(AbsSender absSender, User user, Chat chat, String[] args) {
-        SendMessage answer = new SendMessage();
-        answer.setChatId(chat.getId().toString());
-        prepareResponse(answer, absSender, findClient(user));
+        Client client = findClient(user);
+        SendMessageBuilder answer = sendMessageBuilder.begin()
+                .withLocale(findClient(user).getLocale())
+                .withChatId(chat.getId().toString());
+        sendResponse(answer, absSender, client);
     }
 
     private Client findClient(User user) {
@@ -40,7 +44,7 @@ public abstract class TexteReplyBotCommand extends BotCommand {
         return client.orElseGet(() -> clientService.register(user));
     }
 
-    protected abstract void prepareResponse(SendMessage answer, AbsSender absSender, Client user) throws TelegramApiException;
+    protected abstract void sendResponse(SendMessageBuilder answer, AbsSender absSender, Client user) throws TelegramApiException;
 
     @Override
     public String toString() {
