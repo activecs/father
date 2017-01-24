@@ -51,5 +51,4 @@ public class UpdateMessageProcessor {
     private Class getListenerGenericType(BotUpdateListener listener) {
         return GenericTypeResolver.resolveTypeArgument(listener.getClass(), BotUpdateListener.class);
     }
-
 }

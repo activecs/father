@@ -12,4 +12,6 @@ public interface EnvironmentRepository extends MongoRepository<Environment, Stri
     List<Environment> findByReservationExpirationLessThanAndReservedByIsNotNull(LocalDateTime reservationExpiration);
 
     List<Environment> findByReservedBy(Client client);
+
+    List<Environment> findByReservedByIsNullAndCountry(String country);
 }
