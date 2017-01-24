@@ -34,11 +34,11 @@ public class LocaleCommand extends TexteReplyBotCommand {
     @Override
     protected void sendResponse(SendMessageBuilder answer, AbsSender absSender, Client user) throws TelegramApiException {
         answer.withMessage("please.select.locale")
-              .withReplyKeyboard(markupBuilder.begin()
-                  .withLocale(user.getLocale())
-                  .withFistLineButton(createButton("select.locale.ukr", new Locale("ukr")))
-                  .withFistLineButton(createButton("select.locale.en", ENGLISH))
-                  .withFistLineButton(createButton("select.locale.ru", new Locale("ru"))));
+                .withReplyKeyboard(markupBuilder.begin()
+                        .withLocale(user.getLocale())
+                        .withFistLineButton(createButton("select.locale.ukr", new Locale("ukr")))
+                        .withFistLineButton(createButton("select.locale.en", ENGLISH))
+                        .withFistLineButton(createButton("select.locale.ru", new Locale("ru"))));
         absSender.sendMessage(answer.build());
     }
 
