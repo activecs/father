@@ -29,7 +29,7 @@ public class ReserveEnvCommand extends TexteReplyBotCommand {
     @Override
     protected void sendResponse(SendMessageBuilder answer, AbsSender absSender, Client user) throws TelegramApiException {
         InlineKeyboardMarkupBuilder inlineKeyboardMarkupBuilder = markupBuilder.begin().withLocale(user.getLocale());
-        environmentService.getCountries().forEach(country -> inlineKeyboardMarkupBuilder.withFistLineButton(createButton(country, country)));
+        environmentService.getEnvironmentBanners().forEach(country -> inlineKeyboardMarkupBuilder.withFistLineButton(createButton(country, country)));
         absSender.sendMessage(answer.withMessage("please.select.country")
                 .withReplyKeyboard(inlineKeyboardMarkupBuilder).build());
     }
