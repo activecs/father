@@ -13,6 +13,8 @@ import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 import org.telegram.telegrambots.ApiContextInitializer;
 import org.telegram.telegrambots.TelegramBotsApi;
 
+import com.rits.cloning.Cloner;
+
 @EnableScheduling
 @EnableMongoRepositories
 @SpringBootApplication
@@ -41,6 +43,11 @@ public class EnvfatherApplication {
         source.setBasenames("i18n/messages");
         source.setUseCodeAsDefaultMessage(true);
         return source;
+    }
+
+    @Bean
+    public Cloner cloner() {
+	    return new Cloner();
     }
 
 }

@@ -15,6 +15,7 @@ import com.epam.env.father.model.Client;
 import com.epam.env.father.model.Environment;
 import com.epam.env.father.repository.EnvironmentRepository;
 import com.epam.env.father.service.validation.NotReserved;
+import com.rits.cloning.Cloner;
 
 @Service
 @Validated
@@ -28,14 +29,16 @@ public class EnvironmentService {
     private Long reservationPeriod;
     @Autowired
     private ApplicationEventPublisher eventPublisher;
+    @Autowired
+    private Cloner cloner;
 
     public List<Environment> getAllAvailable() {
         return repository.findAll();
     }
 
     public List<String> getEnvironmentBanners() {
-        return mongoTemplate.getCollection(mongoTemplate.getCollectionName(Environment.class))
-                .distinct("country");
+        String environmentCollection = mongoTemplate.getCollectionName(Environment.class);
+        return mongoTemplate.getCollection(environmentCollection).distinct("country");
     }
 
     public Environment reserveEnvironment(@NotReserved String environmentId, Client client) {
@@ -53,10 +56,11 @@ public class EnvironmentService {
     }
 
     public void releaseReservation(Environment environment) {
+        Environment eventEnvironmentCopy = cloner.deepClone(environment);
         environment.setReservedBy(null);
         environment.setReservationExpiration(null);
         repository.save(environment);
-        eventPublisher.publishEvent(new ReleasedEnvironmentEvent(environment));
+        eventPublisher.publishEvent(new ReleasedEnvironmentEvent(eventEnvironmentCopy));
     }
 
     public List<Environment> getExpiredEnvironments() {
