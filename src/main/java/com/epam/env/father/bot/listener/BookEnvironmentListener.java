@@ -5,12 +5,12 @@ import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.objects.Update;
 
 import com.epam.env.father.bot.meta.UpdateListenerComponent;
-import com.epam.env.father.data.BookEnvironmentData;
+import com.epam.env.father.data.booking.BookEnvironmentData;
 import com.epam.env.father.data.builder.SendMessageBuilder;
 import com.epam.env.father.model.Client;
 import com.epam.env.father.model.Environment;
 import com.epam.env.father.service.ClientService;
-import com.epam.env.father.service.EnvironmentService;
+import com.epam.env.father.service.EnvironmentReservationService;
 
 import javaslang.control.Try;
 import lombok.extern.log4j.Log4j2;
@@ -18,8 +18,9 @@ import lombok.extern.log4j.Log4j2;
 @Log4j2
 @UpdateListenerComponent
 public class BookEnvironmentListener implements BotUpdateListener<BookEnvironmentData> {
+
     @Autowired
-    private EnvironmentService environmentService;
+    private EnvironmentReservationService reservationService;
     @Autowired
     private ClientService clientService;
     @Autowired
@@ -34,13 +35,14 @@ public class BookEnvironmentListener implements BotUpdateListener<BookEnvironmen
                 .withLocale(client.getLocale())
                 .withChatId(client.getId().toString())
                 .withMessage(message)
-                .withMessageArg(environmentData.getBannerCode())
-                .withMessageArg(environmentData.getEnvinronmentCode())
+                .withMessageArg(environmentData.getEnvironmentData().getBannerCode())
+                .withMessageArg(environmentData.getEnvironmentData().getEnvinronmentCode())
+                .withMessageArg(environmentData.getReservationPeriod())
                 .build();
     }
 
     private Environment reserveEnvironment(BookEnvironmentData environmentData, Client client) {
-        return environmentService.reserveEnvironment(environmentData.getEnvinronmentCode(), client);
+        return reservationService.reserveEnvironment(environmentData.getEnvironmentData().getEnvinronmentCode(), client, environmentData.getReservationPeriod());
     }
 
 }

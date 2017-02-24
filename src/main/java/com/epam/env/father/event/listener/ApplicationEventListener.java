@@ -7,6 +7,7 @@ import org.telegram.telegrambots.api.methods.send.SendMessage;
 
 import com.epam.env.father.data.builder.SendMessageBuilder;
 import com.epam.env.father.event.ReleasedEnvironmentEvent;
+import com.epam.env.father.event.ReleasingEnvironmentReminderEvent;
 import com.epam.env.father.model.Client;
 import com.epam.env.father.model.Environment;
 import com.epam.env.father.service.ChatNotificationService;
@@ -35,5 +36,21 @@ public class ApplicationEventListener {
                 .build();
         chatNotificationService.sendMessageToChat(sendMessage);
     }
+
+    @EventListener
+    public void onApplicationEvent(ReleasingEnvironmentReminderEvent event) {
+        Environment environment = event.getEnvironment();
+        Client client = environment.getReservedBy();
+        SendMessage sendMessage = sendMessageBuilder.begin()
+                .withLocale(client.getLocale())
+                .withChatId(client.getId().toString())
+                .withMessage("reservation.will.be.released")
+                .withMessageArg(environment.getCountry())
+                .withMessageArg(environment.getId())
+                .withMessageArg(environment.getReservationExpiration())
+                .build();
+        chatNotificationService.sendMessageToChat(sendMessage);
+    }
+
 
 }

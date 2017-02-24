@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 
+import javax.annotation.PostConstruct;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.GenericTypeResolver;
 import org.springframework.stereotype.Component;
@@ -13,6 +15,7 @@ import org.telegram.telegrambots.api.objects.Update;
 import com.epam.env.father.bot.listener.BotUpdateListener;
 import com.epam.env.father.bot.meta.BotName;
 import com.epam.env.father.bot.meta.UpdateListener;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import javaslang.control.Try;
@@ -26,6 +29,11 @@ public class UpdateMessageProcessor {
     @Autowired
     private ObjectMapper jacksonObjectMapper;
 
+    @PostConstruct
+    public void initMapper() {
+        jacksonObjectMapper.configure(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES, true);
+        jacksonObjectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, true);
+    }
 
     public Optional<SendMessage> process(Update update) {
         return findMessageHandler(update).map(listener -> {

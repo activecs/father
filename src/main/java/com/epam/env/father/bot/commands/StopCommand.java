@@ -7,13 +7,13 @@ import org.telegram.telegrambots.exceptions.TelegramApiException;
 import com.epam.env.father.bot.meta.CommandComponent;
 import com.epam.env.father.data.builder.SendMessageBuilder;
 import com.epam.env.father.model.Client;
-import com.epam.env.father.service.EnvironmentService;
+import com.epam.env.father.service.EnvironmentReservationService;
 
 @CommandComponent
 public class StopCommand extends TexteReplyBotCommand {
 
     @Autowired
-    private EnvironmentService environmentService;
+    private EnvironmentReservationService reservationService;
 
     public StopCommand() {
         super("stop", "With this command you can stop the Bot");
@@ -24,7 +24,7 @@ public class StopCommand extends TexteReplyBotCommand {
         answer.withMessage("good.bye")
               .withMessageArg(user.getFirstName())
               .withMessageArg(user.getLastName());
-        environmentService.releaseReservations(user);
+        reservationService.releaseReservations(user);
         absSender.sendMessage(answer.build());
     }
 }

@@ -1,11 +1,15 @@
 package com.epam.env.father.job;
 
+import static java.time.LocalDateTime.now;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import org.telegram.telegrambots.api.methods.send.SendMessage;
 
-import com.epam.env.father.service.ChatNotificationService;
+import com.epam.env.father.event.ReleasingEnvironmentReminderEvent;
+import com.epam.env.father.service.EnvironmentReservationService;
 import com.epam.env.father.service.EnvironmentService;
 
 @Service
@@ -14,18 +18,23 @@ public class ReleaseReservationJob {
     @Autowired
     private EnvironmentService environmentService;
     @Autowired
-    private ChatNotificationService chatNotificationService;
+    private EnvironmentReservationService reservationService;
+    @Autowired
+    private ApplicationEventPublisher eventPublisher;
+    @Value("${reservation.expiration.reminder.default.value}")
+    private Long expirationReminderPeriod;
 
     @Scheduled(cron = "0 * * * * *")
     public void releaseExpiredReservations() {
-        environmentService.getExpiredEnvironments().forEach(environmentService::releaseReservation);
+        environmentService.getExpiredEnvironments().forEach(reservationService::releaseReservation);
     }
 
-    //@Scheduled(cron = "0 * * * * *")
+    @Scheduled(cron = "0 * * * * *")
     public void sendReminderAboutSoonReleasing() {
-        SendMessage sendMessage = new SendMessage();
-        chatNotificationService.sendMessageToChat(sendMessage);
-
+        environmentService
+                .getExpiredEnvironments(now().plusMinutes(expirationReminderPeriod)).stream()
+                .map(ReleasingEnvironmentReminderEvent::new)
+                .forEach(eventPublisher::publishEvent);
     }
 
 }
