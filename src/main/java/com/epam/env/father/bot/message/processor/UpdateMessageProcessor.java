@@ -4,8 +4,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 
-import javax.annotation.PostConstruct;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.GenericTypeResolver;
 import org.springframework.stereotype.Component;
@@ -15,10 +13,9 @@ import org.telegram.telegrambots.api.objects.Update;
 import com.epam.env.father.bot.listener.BotUpdateListener;
 import com.epam.env.father.bot.meta.BotName;
 import com.epam.env.father.bot.meta.UpdateListener;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import javaslang.control.Try;
+import com.epam.env.father.data.AbstractCallBackData;
+import com.epam.env.father.model.Callback;
+import com.epam.env.father.service.CallbackStorageService;
 
 @Component
 public class UpdateMessageProcessor {
@@ -27,18 +24,12 @@ public class UpdateMessageProcessor {
     @Autowired
     private List<BotUpdateListener> updateListeners;
     @Autowired
-    private ObjectMapper jacksonObjectMapper;
-
-    @PostConstruct
-    public void initMapper() {
-        jacksonObjectMapper.configure(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES, true);
-        jacksonObjectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, true);
-    }
+    private CallbackStorageService callbackStorageService;
 
     public Optional<SendMessage> process(Update update) {
         return findMessageHandler(update).map(listener -> {
-             Object requestData = convertRequestData(update, listener).get();
-             return listener.process(update, requestData);
+             Optional<AbstractCallBackData> requestData = getCallbackData(update);
+             return listener.process(update, requestData.get());
         });
     }
 
@@ -47,16 +38,23 @@ public class UpdateMessageProcessor {
     }
 
     private Predicate<BotUpdateListener> canHandleRequest(Update update) {
-        return listener -> convertRequestData(update, listener).isSuccess();
+        return listener -> canHandleRequest(update, listener);
     }
 
-    private Try<Object> convertRequestData(Update update, BotUpdateListener listener) {
-        final String data = update.getCallbackQuery().getData();
-        final Class<?> listenerGenericType = getListenerGenericType(listener);
-        return Try.of(() -> jacksonObjectMapper.readValue(data, listenerGenericType));
+    private boolean canHandleRequest(Update request, BotUpdateListener listener) {
+        Class<?> listenerGenericType = getListenerGenericType(listener);
+        return getCallbackData(request)
+                .map(listenerGenericType::isInstance)
+                .orElse(false);
+    }
+
+    private Optional<AbstractCallBackData> getCallbackData(Update update) {
+        String callbackKey = update.getCallbackQuery().getData();
+        return callbackStorageService.findByKey(callbackKey).map(Callback::getData);
     }
 
     private Class getListenerGenericType(BotUpdateListener listener) {
         return GenericTypeResolver.resolveTypeArgument(listener.getClass(), BotUpdateListener.class);
     }
+
 }

@@ -9,7 +9,7 @@ import org.telegram.telegrambots.bots.AbsSender;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
 
 import com.epam.env.father.bot.meta.CommandComponent;
-import com.epam.env.father.data.LocaleData;
+import com.epam.env.father.data.bootstrap.LocaleData;
 import com.epam.env.father.data.builder.InlineKeyboardButtonBuilder;
 import com.epam.env.father.data.builder.InlineKeyboardMarkupBuilder;
 import com.epam.env.father.data.builder.SendMessageBuilder;

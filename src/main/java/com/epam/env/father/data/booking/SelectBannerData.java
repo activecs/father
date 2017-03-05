@@ -9,14 +9,10 @@ import lombok.Setter;
 
 @NoArgsConstructor
 @AllArgsConstructor
-public class SelectEnvironmentData implements AbstractCallBackData {
+public class SelectBannerData implements AbstractCallBackData {
 
     @Getter
     @Setter
-    private String bannerCode;
-    @Getter
-    @Setter
-    private String envinronmentCode;
-
+    private String banner;
 
 }

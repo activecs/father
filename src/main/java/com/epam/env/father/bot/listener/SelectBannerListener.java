@@ -7,6 +7,7 @@ import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.objects.Update;
 
 import com.epam.env.father.bot.meta.UpdateListenerComponent;
+import com.epam.env.father.data.booking.SelectBannerData;
 import com.epam.env.father.data.booking.SelectEnvironmentData;
 import com.epam.env.father.data.builder.InlineKeyboardButtonBuilder;
 import com.epam.env.father.data.builder.InlineKeyboardMarkupBuilder;
@@ -20,7 +21,7 @@ import lombok.extern.log4j.Log4j2;
 
 @Log4j2
 @UpdateListenerComponent
-public class SelectBannerListener implements BotUpdateListener<String> {
+public class SelectBannerListener implements BotUpdateListener<SelectBannerData> {
     @Autowired
     private EnvironmentRepository environmentRepository;
     @Autowired
@@ -33,11 +34,11 @@ public class SelectBannerListener implements BotUpdateListener<String> {
     private InlineKeyboardButtonBuilder buttonBuilder;
 
     @Override
-    public SendMessage process(Update update, String bannerCode) {
+    public SendMessage process(Update update, SelectBannerData bannerData) {
         Client client = clientService.findById(update.getCallbackQuery().getFrom().getId()).get();
         InlineKeyboardMarkupBuilder inlineKeyboardMarkupBuilder = markupBuilder.begin().withLocale(client.getLocale());
-        List<Environment> environments = environmentRepository.findByReservedByIsNullAndCountry(bannerCode);
-        environments.stream().map(Environment::getId).forEach(env -> inlineKeyboardMarkupBuilder.withFistLineButton(createButton(env, bannerCode)));
+        List<Environment> environments = environmentRepository.findByReservedByIsNullAndCountry(bannerData.getBanner());
+        environments.stream().map(Environment::getId).forEach(env -> inlineKeyboardMarkupBuilder.withFistLineButton(createButton(env, bannerData.getBanner())));
         return sendMessageBuilder.begin()
                 .withLocale(client.getLocale())
                 .withChatId(client.getId().toString())

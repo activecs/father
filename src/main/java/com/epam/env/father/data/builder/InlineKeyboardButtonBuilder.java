@@ -14,7 +14,9 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.epam.env.father.data.AbstractCallBackData;
+import com.epam.env.father.model.Callback;
+import com.epam.env.father.service.CallbackStorageService;
 
 import lombok.SneakyThrows;
 
@@ -25,11 +27,11 @@ public class InlineKeyboardButtonBuilder {
     @Autowired
     private BeanFactory beanFactory;
     @Autowired
-    private ObjectMapper jacksonObjectMapper;
-    @Autowired
     protected MessageSource messageSource;
+    @Autowired
+    private CallbackStorageService callbackStorageService;
 
-    private Object data;
+    private AbstractCallBackData data;
     private Locale locale = ENGLISH;
     private String message;
     private List<Object> messageArgs = newArrayList();
@@ -56,7 +58,7 @@ public class InlineKeyboardButtonBuilder {
         return this;
     }
 
-    public InlineKeyboardButtonBuilder withData(Object data) {
+    public InlineKeyboardButtonBuilder withData(AbstractCallBackData data) {
         this.data = data;
         return this;
     }
@@ -65,7 +67,8 @@ public class InlineKeyboardButtonBuilder {
     public InlineKeyboardButton build() {
         InlineKeyboardButton button = new InlineKeyboardButton();
         button.setText(messageSource.getMessage(message, messageArgs.toArray(), locale));
-        button.setCallbackData(jacksonObjectMapper.writeValueAsString(data));
+        Callback callback = callbackStorageService.save(data);
+        button.setCallbackData(callback.getKey());
         return button;
     }
 

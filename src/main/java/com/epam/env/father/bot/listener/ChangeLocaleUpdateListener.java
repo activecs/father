@@ -7,7 +7,7 @@ import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.objects.Update;
 
 import com.epam.env.father.bot.meta.UpdateListenerComponent;
-import com.epam.env.father.data.LocaleData;
+import com.epam.env.father.data.bootstrap.LocaleData;
 import com.epam.env.father.data.builder.SendMessageBuilder;
 import com.epam.env.father.model.Client;
 import com.epam.env.father.service.ClientService;

@@ -1,15 +1,18 @@
 package com.epam.env.father.bot.commands;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.telegram.telegrambots.bots.AbsSender;
+import org.telegram.telegrambots.exceptions.TelegramApiException;
+
 import com.epam.env.father.bot.meta.CommandComponent;
+import com.epam.env.father.data.booking.SelectBannerData;
 import com.epam.env.father.data.builder.InlineKeyboardButtonBuilder;
 import com.epam.env.father.data.builder.InlineKeyboardMarkupBuilder;
 import com.epam.env.father.data.builder.SendMessageBuilder;
 import com.epam.env.father.model.Client;
 import com.epam.env.father.service.EnvironmentService;
+
 import lombok.SneakyThrows;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.telegram.telegrambots.bots.AbsSender;
-import org.telegram.telegrambots.exceptions.TelegramApiException;
 
 @CommandComponent
 public class ReserveEnvCommand extends TexteReplyBotCommand {
@@ -36,7 +39,7 @@ public class ReserveEnvCommand extends TexteReplyBotCommand {
 
     private InlineKeyboardButtonBuilder createButton(String message, String country) {
         return buttonBuilder.begin()
-                .withData(country)
+                .withData(new SelectBannerData(country))
                 .withMessage(message);
     }
 }
