@@ -1,5 +1,7 @@
 package com.epam.env.father.service;
 
+import static com.epam.env.father.model.ClientNotificationType.SOON_RELEASE;
+
 import java.time.LocalDateTime;
 import java.util.Set;
 
@@ -9,6 +11,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
+import com.epam.env.father.data.booking.ClientNotificationData;
 import com.epam.env.father.event.ReleasedEnvironmentEvent;
 import com.epam.env.father.model.Client;
 import com.epam.env.father.model.Environment;
@@ -27,6 +30,8 @@ public class EnvironmentReservationService {
     private Long reservationPeriod;
     @Autowired
     private ApplicationEventPublisher eventPublisher;
+    @Autowired
+    private ClientNotificationService clientNotificationService;
     @Autowired
     private Cloner cloner;
 
@@ -54,10 +59,23 @@ public class EnvironmentReservationService {
 
     public void releaseReservation(Environment environment) {
         Environment eventEnvironmentCopy = cloner.deepClone(environment);
+        clearReservationDataFromClient(environment);
+        clearReservationDataFromEnvironment(environment);
+        eventPublisher.publishEvent(new ReleasedEnvironmentEvent(eventEnvironmentCopy));
+    }
+
+    private void clearReservationDataFromClient(Environment environment) {
+        ClientNotificationData notificationData = new ClientNotificationData();
+        notificationData.setEnvironment(environment);
+        notificationData.setClient(environment.getReservedBy());
+        notificationData.setNotificationType(SOON_RELEASE);
+        clientNotificationService.releaseNotification(notificationData);
+    }
+
+    private void clearReservationDataFromEnvironment(Environment environment) {
         environment.setReservedBy(null);
         environment.setReservationExpiration(null);
         repository.save(environment);
-        eventPublisher.publishEvent(new ReleasedEnvironmentEvent(eventEnvironmentCopy));
     }
 
 }

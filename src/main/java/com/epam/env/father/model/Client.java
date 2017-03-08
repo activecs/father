@@ -8,11 +8,9 @@ import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
 
 @Builder
 @EqualsAndHashCode(of = "id")
-@ToString(exclude="chatId")
 public class Client {
 
     @Id
@@ -33,6 +31,14 @@ public class Client {
     @Getter
     @Setter
     private Locale locale = Locale.ENGLISH;
+    @Getter
+    @Setter
+    private ClientNotificationStatus notificationStatus;
+
+    @Override
+    public String toString() {
+        return firstName + " " + lastName;
+    }
 
 }
 

@@ -5,12 +5,14 @@ import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
 
+import com.epam.env.father.data.booking.ClientNotificationData;
 import com.epam.env.father.data.builder.SendMessageBuilder;
 import com.epam.env.father.event.ReleasedEnvironmentEvent;
 import com.epam.env.father.event.ReleasingEnvironmentReminderEvent;
 import com.epam.env.father.model.Client;
 import com.epam.env.father.model.Environment;
 import com.epam.env.father.service.ChatNotificationService;
+import com.epam.env.father.service.ClientNotificationService;
 
 import lombok.extern.log4j.Log4j2;
 
@@ -20,6 +22,8 @@ public class ApplicationEventListener {
 
     @Autowired
     private ChatNotificationService chatNotificationService;
+    @Autowired
+    private ClientNotificationService clientNotificationService;
     @Autowired
     private SendMessageBuilder sendMessageBuilder;
 
@@ -50,7 +54,7 @@ public class ApplicationEventListener {
                 .withMessageArg(environment.getReservationExpiration())
                 .build();
         chatNotificationService.sendMessageToChat(sendMessage);
+        clientNotificationService.submitNotification(new ClientNotificationData(event));
     }
-
 
 }
