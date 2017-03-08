@@ -26,9 +26,9 @@ public class Environment {
     @Override
     public String toString() {
         if (isNull(reservedBy))
-            return format("Environment '{0}' is free", id);
+            return format("Environment {0} is free", id);
         else
-            return format("Environment '{0}' reserved by {1}, reservation expiration date {2}", id, reservedBy, reservationExpiration);
+            return format("Environment {0} reserved by {1}, reservation expiration date {2}", id, reservedBy, reservationExpiration);
         
     }
 }
